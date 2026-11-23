@@ -296,6 +296,20 @@
     overflow: hidden;
   }
 
+  /* Live camera picture and captured photo fill the screen */
+  .camera-feed,
+  .wash-shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .camera-feed.live,
+  .wash-shot.has-photo { opacity: 1; }
+
   .camera-status { color: white; }
   .camera-status .status-time { color: white; }
 
@@ -1088,7 +1102,10 @@
       <rect x="182" y="329" width="26" height="1.5" rx="1" fill="#444"/>
       <rect x="183" y="168" width="24" height="12" rx="2" fill="#333" stroke="#555" stroke-width="0.5"/>
     </svg>
+    <video id="camera-feed" class="camera-feed" playsinline muted autoplay></video>
   </div>
+  <!-- Fallback when live camera isn't allowed: opens the phone's own camera -->
+  <input id="camera-file" type="file" accept="image/*" capture="environment" hidden>
 
   <!-- Status bar -->
   <div class="status-bar" style="background: transparent; position: absolute; top: 0; left: 0; right: 0; z-index: 20;">
@@ -1116,7 +1133,7 @@
     </div>
   </div>
 
-  <div class="camera-hint">Point at the label</div>
+  <div id="camera-hint" class="camera-hint">Point at the label</div>
 
   <!-- Bottom controls -->
   <div class="camera-bottom">
@@ -1142,6 +1159,7 @@
       <rect x="181" y="324" width="28" height="1.5" rx="1" fill="#5A4535"/>
       <rect x="183" y="168" width="24" height="12" rx="2" fill="#2A2020" stroke="#5A4535" stroke-width="0.5"/>
     </svg>
+    <img id="wash-shot" class="wash-shot" alt="">
   </div>
   <div id="wash-overlay" class="wash-overlay"></div>
 
@@ -1602,24 +1620,118 @@
   }
 
   // ── WIRING ───────────────────────────────────────────
-  document.getElementById('btn-camera').addEventListener('click', () => {
-    navigate('camera');
-  });
+  // ── CAMERA ───────────────────────────────────────────
+  const feed = document.getElementById('camera-feed');
+  const cameraHint = document.getElementById('camera-hint');
+  const cameraFile = document.getElementById('camera-file');
+  const washShot = document.getElementById('wash-shot');
+  let cameraStream = null;
+  let lastPhoto = null; // the captured label photo (JPEG data URL)
 
-  document.getElementById('camera-close').addEventListener('click', () => {
-    navigate('cellar', true);
-  });
+  async function startCamera() {
+    cameraHint.textContent = 'Point at the label';
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      cameraHint.textContent = 'Tap the button to take a photo';
+      return;
+    }
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: 'environment' },   // back camera
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+        audio: false,
+      });
+      // If the person left the screen while the permission prompt was open
+      if (current !== 'camera') { stopCamera(); return; }
+      feed.srcObject = cameraStream;
+      await feed.play().catch(() => {});
+      feed.classList.add('live');
+    } catch (err) {
+      cameraStream = null;
+      cameraHint.textContent = err && err.name === 'NotAllowedError'
+        ? 'Camera blocked — tap the button to take a photo'
+        : 'Tap the button to take a photo';
+    }
+  }
 
-  document.getElementById('btn-shutter').addEventListener('click', () => {
+  function stopCamera() {
+    if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+    feed.srcObject = null;
+    feed.classList.remove('live');
+  }
+
+  function grabFrame() {
+    if (!cameraStream || !feed.videoWidth) return null;
+    const w = feed.videoWidth, h = feed.videoHeight;
+    const scale = Math.min(1, 1600 / Math.max(w, h)); // keep the photo a sensible size
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(w * scale);
+    canvas.height = Math.round(h * scale);
+    canvas.getContext('2d').drawImage(feed, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg', 0.85);
+  }
+
+  function flashScreen() {
     const flash = document.createElement('div');
     flash.style.cssText = 'position:fixed;inset:0;background:white;z-index:999;pointer-events:none;opacity:1;transition:opacity 0.4s';
     document.body.appendChild(flash);
     requestAnimationFrame(() => requestAnimationFrame(() => { flash.style.opacity = '0'; }));
     setTimeout(() => flash.remove(), 500);
+  }
+
+  function usePhoto(dataUrl) {
+    lastPhoto = dataUrl;
+    stopCamera();
+    if (dataUrl) {
+      washShot.src = dataUrl;
+      washShot.classList.add('has-photo');
+    } else {
+      washShot.removeAttribute('src');
+      washShot.classList.remove('has-photo');
+    }
     setTimeout(() => {
       navigate('wash');
       startWash();
     }, 150);
+  }
+
+  document.getElementById('btn-camera').addEventListener('click', () => {
+    navigate('camera');
+    startCamera();
+  });
+
+  document.getElementById('camera-close').addEventListener('click', () => {
+    stopCamera();
+    navigate('cellar', true);
+  });
+
+  document.getElementById('btn-shutter').addEventListener('click', () => {
+    const photo = grabFrame();
+    if (!photo) {
+      // No live camera: fall back to the phone's own camera
+      cameraFile.value = '';
+      cameraFile.click();
+      return;
+    }
+    flashScreen();
+    usePhoto(photo);
+  });
+
+  cameraFile.addEventListener('change', () => {
+    const file = cameraFile.files && cameraFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => usePhoto(reader.result);
+    reader.readAsDataURL(file);
+  });
+
+  // Turn the camera off if the app goes into the background
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopCamera();
+    else if (current === 'camera' && !cameraStream) startCamera();
   });
 
   document.getElementById('btn-confirm').addEventListener('click', () => {

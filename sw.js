@@ -1,4 +1,4 @@
-const CACHE = 'wine-journal-v5';
+const CACHE = 'wine-journal-v6';
 const ASSETS = [
   '.',
   'index.html',
