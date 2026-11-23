@@ -21,6 +21,9 @@
 
     --safe-top:    env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
+    /* Gap between bottom-pinned controls and the screen edge:
+       sits just above the iPhone home bar, never less than 12px */
+    --edge-bottom: max(12px, calc(env(safe-area-inset-bottom, 0px) - 10px));
     --safe-left:   env(safe-area-inset-left, 0px);
     --safe-right:  env(safe-area-inset-right, 0px);
   }
@@ -193,7 +196,7 @@
   /* Floating controls */
   .float-controls {
     position: absolute;
-    bottom: calc(var(--safe-bottom) + 28px);
+    bottom: var(--edge-bottom);
     left: 20px;
     right: 20px;
     display: flex;
@@ -238,6 +241,7 @@
     font-weight: 500;
     color: var(--ink-muted);
     flex: 1;
+    white-space: nowrap;
   }
   .add-pill-btns { display: flex; gap: 4px; }
   .add-pill-btn {
@@ -510,7 +514,7 @@
   .match-actions {
     flex-shrink: 0;
     padding: 12px 16px;
-    padding-bottom: calc(var(--safe-bottom) + 24px);
+    padding-bottom: var(--edge-bottom);
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -704,7 +708,7 @@
 
   .tasting-save {
     position: absolute;
-    bottom: calc(var(--safe-bottom) + 20px);
+    bottom: var(--edge-bottom);
     left: 16px;
     right: 16px;
   }
@@ -908,7 +912,7 @@
   /* ── SUCCESS TOAST ───────────────────────────────── */
   .toast {
     position: fixed;
-    bottom: calc(var(--safe-bottom) + 100px);
+    bottom: calc(var(--edge-bottom) + 72px);
     left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: var(--ink);
@@ -1286,7 +1290,7 @@
   </div>
 
   <!-- Sticky save button -->
-  <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; padding-bottom: calc(var(--safe-bottom) + 16px); background: linear-gradient(to bottom, transparent, var(--ground) 40%); pointer-events: none;">
+  <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; padding-bottom: var(--edge-bottom); background: linear-gradient(to bottom, transparent, var(--ground) 40%); pointer-events: none;">
     <button id="btn-save" class="btn-primary" style="pointer-events: auto;">Add to cellar</button>
   </div>
 </div>

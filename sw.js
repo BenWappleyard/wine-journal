@@ -1,4 +1,4 @@
-const CACHE = 'wine-journal-v3';
+const CACHE = 'wine-journal-v4';
 const ASSETS = [
   '.',
   'index.html',
@@ -6,7 +6,6 @@ const ASSETS = [
   'icon-192.png',
   'icon-512.png',
   'icon-180.png',
-  'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap',
 ];
 
 self.addEventListener('install', e => {
@@ -23,19 +22,16 @@ self.addEventListener('activate', e => {
   );
 });
 
+// Network first: always try for the latest version, keep a copy for offline use.
 self.addEventListener('fetch', e => {
-  // Network-first for Google Fonts (they update), cache-first for everything else
-  if (e.request.url.includes('fonts.g')) {
-    e.respondWith(
-      fetch(e.request).then(r => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(r => {
+      if (r.ok) {
         const clone = r.clone();
         caches.open(CACHE).then(c => c.put(e.request, clone));
-        return r;
-      }).catch(() => caches.match(e.request))
-    );
-  } else {
-    e.respondWith(
-      caches.match(e.request).then(r => r || fetch(e.request))
-    );
-  }
+      }
+      return r;
+    }).catch(() => caches.match(e.request).then(r => r || caches.match('index.html')))
+  );
 });
