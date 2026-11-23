@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Wine Journal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -948,6 +949,140 @@
   }
   .meta-field-input::placeholder { color: var(--ink-muted); opacity: 0.4; }
 
+  /* ── SAVED-WINE PIECES ───────────────────────────── */
+  .wine-thumb img,
+  .detail-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .detail-photo {
+    width: 80px;
+    height: 150px;
+    border-radius: 6px;
+  }
+  .wine-card { cursor: pointer; }
+
+  .cellar-empty {
+    padding: 72px 24px 0;
+    text-align: center;
+  }
+  .cellar-empty-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .cellar-empty-text {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink-muted);
+    text-wrap: balance;
+  }
+
+  button.wine-strip-change {
+    background: none;
+    border: none;
+    padding: 6px 0 6px 8px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  #date-row { position: relative; }
+  .date-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field-row-input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: "Inter Tight", system-ui, sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    -moz-appearance: textfield;
+  }
+  .field-row-input::placeholder { color: var(--ink-muted); opacity: 0.5; }
+  .field-row-input::-webkit-outer-spin-button,
+  .field-row-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .btn-delete {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 0;
+    background: none;
+    border: none;
+    font-family: "Inter Tight", system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #A3412F;
+    cursor: pointer;
+  }
+  .btn-delete[hidden] { display: none; }
+
+  /* ── API KEY SHEET ───────────────────────────────── */
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    background: rgba(20, 22, 23, 0.45);
+    display: flex;
+    align-items: flex-end;
+  }
+  .sheet-backdrop[hidden] { display: none; }
+  .sheet {
+    width: 100%;
+    background: var(--ground);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px;
+    padding-bottom: calc(var(--edge-bottom) + 8px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sheet-title {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .sheet-text {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink-muted);
+  }
+  .sheet-text.error { color: #A3412F; }
+  .sheet-input {
+    height: 48px;
+    border-radius: 12px;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    padding: 0 15px;
+    font-family: "Inter Tight", system-ui, sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    outline: none;
+    margin-top: 4px;
+  }
+  .sheet-input:focus { border-color: var(--accent); }
+  .sheet-hint {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+
   /* ── SUCCESS TOAST ───────────────────────────────── */
   .toast {
     position: fixed;
@@ -989,70 +1124,12 @@
   <div class="cellar-header">
     <div class="cellar-title">Here's to you !</div>
     <div class="cellar-count">
-      <span class="cellar-count-num">47</span>
-      <span class="cellar-count-label">Bottles</span>
+      <span id="cellar-count-num" class="cellar-count-num">0</span>
+      <span id="cellar-count-label" class="cellar-count-label">Bottles</span>
     </div>
   </div>
 
-  <div class="list-scroll">
-    <div class="group-label">This week</div>
-
-    <div class="wine-card" data-id="0">
-      <div class="wine-thumb"><svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg></div>
-      <div class="wine-info">
-        <div class="wine-name">Saumur-Champigny</div>
-        <div class="wine-meta">Clos Rougeard · Loire · 2019</div>
-      </div>
-      <span class="wine-score">96</span>
-    </div>
-
-    <div class="wine-card" data-id="1">
-      <div class="wine-thumb"><svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg></div>
-      <div class="wine-info">
-        <div class="wine-name">Vin Jaune</div>
-        <div class="wine-meta">Domaine Macle · Jura · 2016</div>
-      </div>
-      <span class="wine-score">95</span>
-    </div>
-
-    <div class="wine-card" data-id="2">
-      <div class="wine-thumb"><svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg></div>
-      <div class="wine-info">
-        <div class="wine-name">Cartology</div>
-        <div class="wine-meta">Alheit Vineyards · Western Cape · 2023</div>
-      </div>
-      <span class="wine-score">93</span>
-    </div>
-
-    <div class="group-label" style="margin-top: 4px;">October</div>
-
-    <div class="wine-card" data-id="3">
-      <div class="wine-thumb"><svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg></div>
-      <div class="wine-info">
-        <div class="wine-name">Crémant Brut Nature</div>
-        <div class="wine-meta">Vins Schaal · Alsace · NV</div>
-      </div>
-      <span class="wine-score">88</span>
-    </div>
-
-    <div class="wine-card" data-id="4">
-      <div class="wine-thumb"><svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg></div>
-      <div class="wine-info">
-        <div class="wine-name">FMC Chenin Blanc</div>
-        <div class="wine-meta">Ken Forrester · Stellenbosch · 2022</div>
-      </div>
-      <span class="wine-score">91</span>
-    </div>
-
-    <div class="wine-card" data-id="5">
-      <div class="wine-thumb"><svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg></div>
-      <div class="wine-info">
-        <div class="wine-name">Chablis Les Clos</div>
-        <div class="wine-meta">Vincent Dauvissat · Burgundy · 2019</div>
-      </div>
-      <span class="wine-score">95</span>
-    </div>
-  </div>
+  <div id="cellar-list" class="list-scroll"></div>
 
   <!-- Floating controls -->
   <div class="float-controls">
@@ -1219,16 +1296,12 @@
   </div>
 
   <div class="match-details">
-    <div class="match-name">Saumur-Champigny</div>
-    <div class="match-producer">Clos Rougeard · Loire, France</div>
-    <div class="match-tags">
-      <span class="tag">2021</span>
-      <span class="tag">White</span>
-      <span class="tag">Grand Cru</span>
-    </div>
+    <div id="match-name" class="match-name"></div>
+    <div id="match-producer" class="match-producer"></div>
+    <div id="match-tags" class="match-tags"></div>
     <div class="match-confidence">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="var(--accent)" stroke-width="1"/><path d="M4 7l2 2 4-4" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      High confidence match
+      <span id="match-confidence-text">High confidence match</span>
     </div>
   </div>
 
@@ -1272,10 +1345,10 @@
         </svg>
       </div>
       <div class="wine-strip-info">
-        <div id="tasting-strip-name" class="wine-strip-name">Saumur-Champigny</div>
-        <div id="tasting-strip-meta" class="wine-strip-meta">Clos Rougeard · 2019</div>
+        <div id="tasting-strip-name" class="wine-strip-name"></div>
+        <div id="tasting-strip-meta" class="wine-strip-meta"></div>
       </div>
-      <span class="wine-strip-change">Change</span>
+      <button id="tasting-change" class="wine-strip-change" type="button">Change</button>
     </div>
 
     <!-- Meta fields — shown only in manual entry flow -->
@@ -1317,6 +1390,7 @@
     <div class="field-label">Date tasted</div>
     <div class="field-row" id="date-row">
       <span id="date-val" class="field-row-val"></span>
+      <input id="date-input" class="date-input" type="date" aria-label="Date tasted">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="2" stroke="var(--ink-muted)" stroke-width="1.3"/><path d="M5 1v3M11 1v3" stroke="var(--ink-muted)" stroke-width="1.3" stroke-linecap="round"/><path d="M2 7h12" stroke="var(--ink-muted)" stroke-width="1.3"/></svg>
     </div>
 
@@ -1331,13 +1405,15 @@
     <!-- Score -->
     <div class="field-label">Score <span>optional</span></div>
     <div class="field-row">
-      <span class="field-row-placeholder">Add a score out of 100</span>
+      <input id="score-input" class="field-row-input" type="number" inputmode="numeric" min="0" max="100" placeholder="Add a score out of 100" aria-label="Score out of 100">
     </div>
+
+    <button id="btn-delete" class="btn-delete" type="button" hidden>Delete wine</button>
   </div>
 
   <!-- Sticky save button -->
   <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; padding-bottom: var(--edge-bottom); background: linear-gradient(to bottom, transparent, var(--ground) 40%); pointer-events: none;">
-    <button id="btn-save" class="btn-primary" style="pointer-events: auto;">Add to cellar</button>
+    <button id="btn-save" class="btn-primary" style="pointer-events: auto; width: 100%;">Add to cellar</button>
   </div>
 </div>
 
@@ -1358,14 +1434,15 @@
       <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M7 1L1 7l6 6" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Cellar
     </button>
-    <button class="btn-edit">Edit</button>
+    <button id="btn-edit" class="btn-edit">Edit</button>
   </div>
 
   <div class="detail-scroll">
     <!-- Hero: bottle + name/score -->
     <div class="detail-hero">
       <div class="detail-bottle">
-        <svg width="80" height="150" viewBox="0 0 80 150" fill="none">
+        <img id="d-photo" class="detail-photo" alt="" hidden>
+        <svg id="d-bottle-svg" width="80" height="150" viewBox="0 0 80 150" fill="none">
           <ellipse cx="40" cy="144" rx="22" ry="4" fill="rgba(35,40,42,0.08)"/>
           <rect x="28" y="59" width="24" height="81" rx="3" fill="#2C3E2D"/>
           <path d="M28 59 Q28 40 40 34 Q52 40 52 59Z" fill="#2C3E2D"/>
@@ -1415,20 +1492,22 @@
   </div>
 </div>
 
+<!-- API key sheet: asked once, stored only on this phone -->
+<div id="key-sheet" class="sheet-backdrop" hidden>
+  <form id="key-form" class="sheet" autocomplete="off">
+    <div class="sheet-title">Connect to Claude</div>
+    <p id="key-msg" class="sheet-text">To read wine labels, paste your Anthropic API key. It's saved only on this phone.</p>
+    <input id="key-input" class="sheet-input" type="password" placeholder="sk-ant-…" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <p class="sheet-hint">Create one at console.anthropic.com → API Keys</p>
+    <button class="btn-primary" type="submit">Save key</button>
+    <button id="key-cancel" class="btn-secondary" type="button">Add details myself</button>
+  </form>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast">✓ Added to cellar</div>
 
 <script>
-  // ── WINE DATA ────────────────────────────────────────
-  const WINES = [
-    { name: 'Saumur-Champigny', producer: 'Clos Rougeard', region: 'Loire', vintage: '2019', type: 'Red', score: '96', note: 'Incredible petrol and slate on the nose. Bright citrus with a long mineral finish — still has years ahead of it.', date: 'Nov 12, 2026', where: 'Home' },
-    { name: 'Vin Jaune', producer: 'Domaine Macle', region: 'Jura', vintage: '2016', type: 'White', score: '95', note: null, date: 'Nov 10, 2026', where: 'Restaurant' },
-    { name: 'Cartology', producer: 'Alheit Vineyards', region: 'Western Cape', vintage: '2023', type: 'White', score: '93', note: null, date: 'Nov 9, 2026', where: 'Home' },
-    { name: 'Crémant Brut Nature', producer: 'Vins Schaal', region: 'Alsace', vintage: 'NV', type: 'Sparkling', score: '88', note: null, date: 'Oct 28, 2026', where: 'Home' },
-    { name: 'FMC Chenin Blanc', producer: 'Ken Forrester', region: 'Stellenbosch', vintage: '2022', type: 'White', score: '91', note: null, date: 'Oct 22, 2026', where: 'Home' },
-    { name: 'Chablis Les Clos', producer: 'Vincent Dauvissat', region: 'Burgundy', vintage: '2019', type: 'White', score: '95', note: null, date: 'Oct 18, 2026', where: 'Restaurant' },
-  ];
-
   // ── NAV HELPERS ─────────────────────────────────────
   const screens = {
     cellar:  document.getElementById('screen-cellar'),
@@ -1475,18 +1554,151 @@
     current = to;
   }
 
-  // ── WINE DETAIL ──────────────────────────────────────
-  function openDetail(id) {
-    const w = WINES[id];
-    if (!w) return;
+  // ── SAVED WINES (stored on this phone in IndexedDB) ──
+  const DB_NAME = 'wine-journal';
+  const STORE = 'wines';
+  let cellar = [];          // every saved wine, newest first
+  let dbPromise = null;
 
+  function openDB() {
+    if (!dbPromise) {
+      dbPromise = new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(STORE, { keyPath: 'id' });
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    return dbPromise;
+  }
+
+  function dbRequest(mode, fn) {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, mode);
+      const req = fn(tx.objectStore(STORE));
+      tx.oncomplete = () => resolve(req && req.result);
+      tx.onerror = () => reject(tx.error);
+    }));
+  }
+
+  const dbAll    = () => dbRequest('readonly',  s => s.getAll());
+  const dbPut    = rec => dbRequest('readwrite', s => s.put(rec));
+  const dbDelete = id  => dbRequest('readwrite', s => s.delete(id));
+
+  function sortCellar() {
+    cellar.sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.createdAt - a.createdAt);
+  }
+
+  async function loadCellar() {
+    try { cellar = (await dbAll()) || []; } catch (e) { cellar = []; }
+    sortCellar();
+    renderCellar();
+    // Ask the phone not to clear this data when space runs low
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  }
+
+  // ── DATES ────────────────────────────────────────────
+  function todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+  function parseISO(iso) {
+    const [y, m, d] = (iso || todayISO()).split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+  function formatLong(iso) {
+    return parseISO(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function groupFor(iso) {
+    const d = parseISO(iso);
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const daysAgo = Math.round((startOfToday - d) / 86400000);
+    if (daysAgo >= 0 && daysAgo < 7) return 'This week';
+    const opts = { month: 'long' };
+    if (d.getFullYear() !== now.getFullYear()) opts.year = 'numeric';
+    return d.toLocaleDateString('en-GB', opts);
+  }
+
+  // ── CELLAR LIST ──────────────────────────────────────
+  const BOTTLE_ICON = '<svg width="14" height="26" viewBox="0 0 14 26" fill="none"><rect x="5" y="0" width="4" height="7" rx="1" fill="var(--ink-muted)" opacity=".35"/><path d="M2 9C2 8 3.3 7 7 7s5 1 5 2v11c0 2-1.6 6-5 6s-5-4-5-6V9z" fill="var(--ink-muted)" opacity=".25"/></svg>';
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function metaLine(w) {
+    return [w.producer, w.region, w.vintage].filter(Boolean).join(' · ');
+  }
+
+  function renderCellar() {
+    const list = document.getElementById('cellar-list');
+    list.innerHTML = '';
+    document.getElementById('cellar-count-num').textContent = cellar.length;
+    document.getElementById('cellar-count-label').textContent = cellar.length === 1 ? 'Bottle' : 'Bottles';
+
+    if (!cellar.length) {
+      const empty = el('div', 'cellar-empty');
+      empty.append(
+        el('div', 'cellar-empty-title', 'Your cellar is empty'),
+        el('div', 'cellar-empty-text', 'Scan a label with the camera, or tap + to add a wine yourself.')
+      );
+      list.append(empty);
+      return;
+    }
+
+    let lastGroup = null;
+    cellar.forEach(w => {
+      const group = groupFor(w.date);
+      if (group !== lastGroup) {
+        list.append(el('div', 'group-label', group));
+        lastGroup = group;
+      }
+      const card = el('div', 'wine-card');
+      card.dataset.id = w.id;
+
+      const thumb = el('div', 'wine-thumb');
+      if (w.thumb) {
+        const img = el('img');
+        img.src = w.thumb;
+        img.alt = '';
+        thumb.append(img);
+      } else {
+        thumb.innerHTML = BOTTLE_ICON;
+      }
+
+      const info = el('div', 'wine-info');
+      info.append(el('div', 'wine-name', w.name), el('div', 'wine-meta', metaLine(w)));
+
+      const score = w.score != null
+        ? el('span', 'wine-score', w.score)
+        : el('span', 'wine-score-empty', '—');
+
+      card.append(thumb, info, score);
+      list.append(card);
+    });
+  }
+
+  document.getElementById('cellar-list').addEventListener('click', e => {
+    const card = e.target.closest('.wine-card');
+    if (card) openDetail(card.dataset.id);
+  });
+
+  // ── WINE DETAIL ──────────────────────────────────────
+  let detailId = null;
+
+  function fillDetail(w) {
+    detailId = w.id;
     document.getElementById('d-name').textContent = w.name;
     document.getElementById('d-producer').textContent =
       [w.producer, w.region].filter(Boolean).join(' · ');
 
     const scoreEl = document.getElementById('d-score');
     const denomEl = document.getElementById('d-score-denom');
-    if (w.score) {
+    if (w.score != null) {
       scoreEl.textContent = w.score;
       scoreEl.className = 'detail-score-big';
       denomEl.style.display = '';
@@ -1496,14 +1708,21 @@
       denomEl.style.display = 'none';
     }
 
+    const photo = document.getElementById('d-photo');
+    const bottle = document.getElementById('d-bottle-svg');
+    if (w.thumb) {
+      photo.src = w.thumb;
+      photo.hidden = false;
+      bottle.style.display = 'none';
+    } else {
+      photo.hidden = true;
+      photo.removeAttribute('src');
+      bottle.style.display = '';
+    }
+
     const tagsEl = document.getElementById('d-tags');
     tagsEl.innerHTML = '';
-    [w.vintage, w.type, w.region].filter(Boolean).forEach(t => {
-      const span = document.createElement('span');
-      span.className = 'tag';
-      span.textContent = t;
-      tagsEl.appendChild(span);
-    });
+    [w.vintage, w.type, w.grape, w.country].filter(Boolean).forEach(t => tagsEl.append(el('span', 'tag', t)));
 
     const noteEl = document.getElementById('d-note');
     if (w.note) {
@@ -1514,53 +1733,162 @@
       noteEl.className = 'detail-note-empty';
     }
 
-    document.getElementById('d-date').textContent = w.date || '—';
+    document.getElementById('d-date').textContent = w.date ? formatLong(w.date) : '—';
     document.getElementById('d-where').textContent = w.where || '—';
-
-    navigate('detail');
   }
 
-  // ── CELLAR CARD TAPS ─────────────────────────────────
-  document.querySelectorAll('.wine-card[data-id]').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = parseInt(card.dataset.id, 10);
-      openDetail(id);
-    });
-  });
+  function openDetail(id) {
+    const w = cellar.find(x => x.id === id);
+    if (!w) return;
+    fillDetail(w);
+    navigate('detail');
+  }
 
   document.getElementById('detail-back').addEventListener('click', () => {
     navigate('cellar', true);
   });
 
-  // ── TASTING SCREEN MODES ─────────────────────────────
-  // mode: 'scan' (from camera flow) or 'manual' (from + button)
-  function openTasting(mode) {
-    const titleEl = document.getElementById('tasting-title');
-    const stripEl = document.getElementById('tasting-strip');
-    const metaEl  = document.getElementById('meta-fields');
-    const noteEl  = document.getElementById('tasting-note-field');
+  document.getElementById('btn-edit').addEventListener('click', () => {
+    const w = cellar.find(x => x.id === detailId);
+    if (w) openTasting('edit', w);
+  });
 
-    noteEl.textContent = '';
+  // ── TASTING FORM ─────────────────────────────────────
+  // mode: 'scan'   – wine identified from a photo (shows the wine strip)
+  //       'manual' – person types the details (or corrects a scan)
+  //       'edit'   – changing a wine already in the cellar
+  let draft = {};            // the wine being added or edited
+  let tastingMode = 'manual';
 
-    if (mode === 'manual') {
-      titleEl.textContent = 'What are you drinking?';
-      stripEl.style.display = 'none';
-      metaEl.style.display = '';
-      // Clear meta inputs
-      ['meta-wine','meta-producer','meta-region','meta-vintage','meta-type'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-    } else {
-      // scan / confirm flow — pre-filled from match screen
-      titleEl.textContent = 'Tasting note';
-      stripEl.style.display = '';
-      metaEl.style.display = 'none';
-      document.getElementById('tasting-strip-name').textContent = 'Saumur-Champigny';
-      document.getElementById('tasting-strip-meta').textContent = 'Clos Rougeard · 2019';
-    }
+  const META = { name: 'meta-wine', producer: 'meta-producer', region: 'meta-region', vintage: 'meta-vintage', type: 'meta-type' };
+  const dateInput  = document.getElementById('date-input');
+  const scoreInput = document.getElementById('score-input');
+  const deleteBtn  = document.getElementById('btn-delete');
+  const saveBtn    = document.getElementById('btn-save');
 
+  function setDate(iso) {
+    dateInput.value = iso;
+    document.getElementById('date-val').textContent = formatLong(iso);
+  }
+  dateInput.addEventListener('change', () => setDate(dateInput.value || todayISO()));
+
+  function setWhere(val) {
+    document.querySelectorAll('#where-control .seg-option').forEach(o =>
+      o.classList.toggle('active', o.dataset.val === (val || 'Home')));
+  }
+
+  function showMetaFields(show) {
+    document.getElementById('tasting-strip').style.display = show ? 'none' : '';
+    document.getElementById('meta-fields').style.display = show ? '' : 'none';
+  }
+
+  function openTasting(mode, wine = {}) {
+    tastingMode = mode;
+    draft = { ...wine };
+
+    const titles = { scan: 'Tasting note', manual: 'What are you drinking?', edit: 'Edit wine' };
+    document.getElementById('tasting-title').textContent = titles[mode];
+
+    Object.entries(META).forEach(([key, id]) => {
+      document.getElementById(id).value = draft[key] || '';
+    });
+    document.getElementById('tasting-strip-name').textContent = draft.name || '';
+    document.getElementById('tasting-strip-meta').textContent = [draft.producer, draft.vintage].filter(Boolean).join(' · ');
+    showMetaFields(mode !== 'scan');
+
+    document.getElementById('tasting-note-field').textContent = draft.note || '';
+    setDate(draft.date || todayISO());
+    setWhere(draft.where);
+    scoreInput.value = draft.score != null ? draft.score : '';
+
+    deleteBtn.hidden = mode !== 'edit';
+    deleteBtn.textContent = 'Delete wine';
+    deleteBtn.dataset.armed = '';
+    saveBtn.textContent = mode === 'edit' ? 'Save changes' : 'Add to cellar';
+
+    document.querySelector('#screen-tasting .tasting-scroll').scrollTop = 0;
     navigate('tasting');
   }
+
+  document.getElementById('tasting-change').addEventListener('click', () => showMetaFields(true));
+
+  function readScore() {
+    const raw = scoreInput.value.trim();
+    if (raw === '') return null;
+    const n = Math.round(Number(raw));
+    if (!Number.isFinite(n)) return null;
+    return Math.max(0, Math.min(100, n));
+  }
+
+  async function saveTasting() {
+    const fields = {};
+    Object.entries(META).forEach(([key, id]) => {
+      fields[key] = document.getElementById(id).value.trim();
+    });
+    if (!fields.name) {
+      showMetaFields(true);
+      document.getElementById('meta-wine').focus();
+      showToast('Add the name of the wine');
+      return;
+    }
+
+    const active = document.querySelector('#where-control .seg-option.active');
+    const rec = {
+      ...draft,
+      ...fields,
+      note: document.getElementById('tasting-note-field').innerText.trim(),
+      date: dateInput.value || todayISO(),
+      where: active ? active.dataset.val : 'Home',
+      score: readScore(),
+    };
+    if (!rec.id) {
+      rec.id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+      rec.createdAt = Date.now();
+    }
+
+    try {
+      await dbPut(rec);
+    } catch (e) {
+      showToast('Couldn’t save — try again');
+      return;
+    }
+    cellar = cellar.filter(w => w.id !== rec.id).concat(rec);
+    sortCellar();
+    renderCellar();
+
+    if (tastingMode === 'edit') {
+      fillDetail(rec);
+      navigate('detail', true);
+      setTimeout(() => showToast('✓ Saved'), 350);
+    } else {
+      navigate('cellar', true);
+      setTimeout(() => showToast('✓ Added to cellar'), 350);
+    }
+  }
+
+  saveBtn.addEventListener('click', saveTasting);
+
+  deleteBtn.addEventListener('click', async () => {
+    // First tap asks for confirmation, second tap deletes
+    if (!deleteBtn.dataset.armed) {
+      deleteBtn.dataset.armed = '1';
+      deleteBtn.textContent = 'Tap again to delete';
+      setTimeout(() => {
+        deleteBtn.dataset.armed = '';
+        deleteBtn.textContent = 'Delete wine';
+      }, 3000);
+      return;
+    }
+    try { await dbDelete(draft.id); } catch (e) { showToast('Couldn’t delete — try again'); return; }
+    cellar = cellar.filter(w => w.id !== draft.id);
+    renderCellar();
+    navigate('cellar', true);
+    setTimeout(() => showToast('Deleted'), 350);
+  });
+
+  document.getElementById('tasting-close').addEventListener('click', () => {
+    navigate(tastingMode === 'edit' ? 'detail' : 'cellar', true);
+  });
 
   // ── WASH DOTS ANIMATION ──────────────────────────────
   let dotTimer = null;
@@ -1584,18 +1912,13 @@
     if (dotTimer) { clearInterval(dotTimer); dotTimer = null; }
   }
 
-  // ── WASH AUTO-ADVANCE ────────────────────────────────
-  let washTimer = null;
-  function startWash() {
+  // ── WASH ANIMATION ───────────────────────────────────
+  function startWashAnimation() {
     const overlay = document.getElementById('wash-overlay');
     overlay.style.animation = 'none';
     void overlay.offsetWidth;
     overlay.style.animation = 'washSweep 1.8s cubic-bezier(0.4,0,0.2,1) forwards';
     animateDots();
-    washTimer = setTimeout(() => {
-      stopDots();
-      navigate('match');
-    }, 2600);
   }
 
   // ── SEGMENTED CONTROL ────────────────────────────────
@@ -1605,11 +1928,6 @@
     document.querySelectorAll('#where-control .seg-option').forEach(o => o.classList.remove('active'));
     opt.classList.add('active');
   });
-
-  // ── DATE ─────────────────────────────────────────────
-  const dateVal = document.getElementById('date-val');
-  const today = new Date();
-  dateVal.textContent = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   // ── TOAST ─────────────────────────────────────────────
   function showToast(msg) {
@@ -1666,7 +1984,7 @@
   function grabFrame() {
     if (!cameraStream || !feed.videoWidth) return null;
     const w = feed.videoWidth, h = feed.videoHeight;
-    const scale = Math.min(1, 1600 / Math.max(w, h)); // keep the photo a sensible size
+    const scale = Math.min(1, 1568 / Math.max(w, h)); // keep the photo a sensible size
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(w * scale);
     canvas.height = Math.round(h * scale);
@@ -1694,7 +2012,7 @@
     }
     setTimeout(() => {
       navigate('wash');
-      startWash();
+      if (dataUrl) runIdentification(dataUrl);
     }, 150);
   }
 
@@ -1734,26 +2052,231 @@
     else if (current === 'camera' && !cameraStream) startCamera();
   });
 
+  // ── IDENTIFY THE WINE (Claude reads the label photo) ─
+  const KEY_STORE = 'wj-anthropic-key';
+  const MODELS = ['claude-haiku-5-5', 'claude-sonnet-5-5']; // second is a fallback
+  const WINE_TYPES = ['Red', 'White', 'Rosé', 'Sparkling', 'Orange', 'Sweet', 'Fortified'];
+
+  function getKey() {
+    try { return localStorage.getItem(KEY_STORE) || ''; } catch (e) { return ''; }
+  }
+  function setKey(k) {
+    try { k ? localStorage.setItem(KEY_STORE, k) : localStorage.removeItem(KEY_STORE); } catch (e) {}
+  }
+
+  // Shows the key sheet; resolves with the key, or null if they chose to type details instead
+  function askForKey(message) {
+    const sheet = document.getElementById('key-sheet');
+    const form  = document.getElementById('key-form');
+    const input = document.getElementById('key-input');
+    const msg   = document.getElementById('key-msg');
+    const cancel = document.getElementById('key-cancel');
+    msg.textContent = message || 'To read wine labels, paste your Anthropic API key. It’s saved only on this phone.';
+    msg.classList.toggle('error', !!message);
+    input.value = '';
+    sheet.hidden = false;
+    setTimeout(() => input.focus(), 50);
+    return new Promise(resolve => {
+      const done = val => {
+        sheet.hidden = true;
+        form.removeEventListener('submit', onSubmit);
+        cancel.removeEventListener('click', onCancel);
+        input.blur();
+        resolve(val);
+      };
+      const onSubmit = e => {
+        e.preventDefault();
+        const k = input.value.trim();
+        if (!k) { input.focus(); return; }
+        setKey(k);
+        done(k);
+      };
+      const onCancel = () => done(null);
+      form.addEventListener('submit', onSubmit);
+      cancel.addEventListener('click', onCancel);
+    });
+  }
+
+  const IDENTIFY_TOOL = {
+    name: 'record_wine',
+    description: 'Record the wine shown on the bottle label in the photo.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        identified: { type: 'boolean', description: 'false if the photo does not show a readable wine label' },
+        name:     { type: 'string', description: 'Wine or cuvée name as a drinker would call it, e.g. "Chablis Les Clos" or "Saumur-Champigny". Use the appellation if there is no cuvée name.' },
+        producer: { type: 'string', description: 'Producer, domaine, château or estate' },
+        region:   { type: 'string', description: 'Wine region, e.g. "Loire", "Burgundy", "Stellenbosch"' },
+        country:  { type: 'string' },
+        vintage:  { type: 'string', description: 'Four-digit year, or "NV" for non-vintage. Empty if not visible.' },
+        type:     { type: 'string', enum: WINE_TYPES },
+        grape:    { type: 'string', description: 'Main grape or blend, if shown or well known for this wine' },
+        confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
+      },
+      required: ['identified'],
+    },
+  };
+
+  class ApiError extends Error {
+    constructor(status, message) { super(message); this.status = status; }
+  }
+
+  async function callClaude(key, model, base64) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 600,
+        tools: [IDENTIFY_TOOL],
+        tool_choice: { type: 'tool', name: 'record_wine' },
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+            { type: 'text', text: 'This is a photo of a wine bottle taken for a personal wine journal. Read the label and identify the wine. Only fill in details you can read on the label or are confident about for this specific wine; leave the rest empty. If there is no readable wine label, set identified to false.' },
+          ],
+        }],
+      }),
+    });
+    if (!res.ok) {
+      let msg = '';
+      try { msg = (await res.json()).error.message; } catch (e) {}
+      throw new ApiError(res.status, msg);
+    }
+    const data = await res.json();
+    const use = (data.content || []).find(b => b.type === 'tool_use');
+    if (!use) throw new ApiError(0, 'No answer');
+    return use.input;
+  }
+
+  async function identifyWine(photoDataUrl, key) {
+    const base64 = photoDataUrl.split(',')[1];
+    let lastErr;
+    for (const model of MODELS) {
+      try {
+        return await callClaude(key, model, base64);
+      } catch (e) {
+        lastErr = e;
+        if (e.status !== 404) throw e;   // only a missing model is worth retrying
+      }
+    }
+    throw lastErr;
+  }
+
+  // Small copy of the photo kept with the saved wine
+  function makeThumb(dataUrl, maxSide = 480) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = () => resolve(null);
+      img.src = dataUrl;
+    });
+  }
+
+  // Photos from the phone's own camera can be huge; shrink to what Claude needs
+  function shrinkPhoto(dataUrl) {
+    return makeThumb(dataUrl, 1568).then(r => r || dataUrl);
+  }
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function fillMatch(w) {
+    document.getElementById('match-name').textContent = w.name;
+    document.getElementById('match-producer').textContent =
+      [w.producer, [w.region, w.country].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
+    const tags = document.getElementById('match-tags');
+    tags.innerHTML = '';
+    [w.vintage, w.type, w.grape].filter(Boolean).forEach(t => tags.append(el('span', 'tag', t)));
+    document.getElementById('match-confidence-text').textContent =
+      { high: 'High confidence match', medium: 'Likely match', low: 'Best guess — check the details' }[w.confidence] || 'Likely match';
+  }
+
+  function cleanResult(r) {
+    const s = v => (typeof v === 'string' ? v.trim() : '');
+    return {
+      name: s(r.name), producer: s(r.producer), region: s(r.region), country: s(r.country),
+      vintage: s(r.vintage), type: WINE_TYPES.includes(r.type) ? r.type : '', grape: s(r.grape),
+      confidence: r.confidence,
+    };
+  }
+
+  function goManual(wine, message) {
+    stopDots();
+    openTasting('manual', wine);
+    if (message) setTimeout(() => showToast(message), 350);
+  }
+
+  async function runIdentification(photo) {
+    startWashAnimation();
+    const [thumb, small] = await Promise.all([makeThumb(photo), shrinkPhoto(photo)]);
+    const base = { thumb };
+
+    let key = getKey();
+    if (!key) {
+      key = await askForKey();
+      if (!key) return goManual(base);
+    }
+
+    const minWait = wait(1800);   // let the wash animation play
+    let result;
+    try {
+      result = await identifyWine(small, key);
+    } catch (e) {
+      await minWait;
+      if (e.status === 401 || e.status === 403) {
+        setKey('');
+        const again = await askForKey('That key didn’t work. Check it was copied in full and paste it again.');
+        if (again) return runIdentification(photo);
+        return goManual(base);
+      }
+      if (e.status === 400 && /credit|billing|balance/i.test(e.message)) {
+        return goManual(base, 'Your Anthropic account needs credit');
+      }
+      return goManual(base, navigator.onLine === false
+        ? 'No connection — add the details yourself'
+        : 'Couldn’t identify — add the details yourself');
+    }
+    await minWait;
+    stopDots();
+
+    const wine = { ...base, ...cleanResult(result) };
+    if (!result.identified || !wine.name) {
+      return goManual(base, 'Couldn’t read the label — add the details yourself');
+    }
+    draft = wine;
+    fillMatch(wine);
+    navigate('match');
+  }
+
   document.getElementById('btn-confirm').addEventListener('click', () => {
-    openTasting('scan');
+    const { confidence, ...wine } = draft;
+    openTasting('scan', wine);
   });
 
+  // Not right: open the editable form with what Claude found, so it can be corrected
   document.getElementById('btn-not-right').addEventListener('click', () => {
-    showToast('Manual search coming soon');
-  });
-
-  document.getElementById('tasting-close').addEventListener('click', () => {
-    navigate('cellar', true);
-  });
-
-  document.getElementById('btn-save').addEventListener('click', () => {
-    navigate('cellar', true);
-    setTimeout(() => showToast('✓ Added to cellar'), 350);
+    const { confidence, ...wine } = draft;
+    openTasting('manual', wine);
   });
 
   document.getElementById('btn-manual').addEventListener('click', () => {
     openTasting('manual');
   });
+
+  loadCellar();
 
   // ── FULL-HEIGHT FIX FOR HOME-SCREEN APP ──────────────
   if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
