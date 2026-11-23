@@ -72,6 +72,12 @@
   }
 
   /* ── SCREEN SYSTEM ───────────────────────────────── */
+  /* Home-screen app on iPhone: the window can stop short of the real
+     bottom edge, so size everything to the full display height */
+  html.standalone,
+  html.standalone body { height: var(--app-h, 100vh); }
+  html.standalone .screen { bottom: auto; height: var(--app-h, 100vh); }
+
   .screen {
     position: fixed;
     inset: 0;
@@ -1614,6 +1620,16 @@
   document.getElementById('btn-manual').addEventListener('click', () => {
     openTasting('manual');
   });
+
+  // ── FULL-HEIGHT FIX FOR HOME-SCREEN APP ──────────────
+  if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+    const root = document.documentElement;
+    root.classList.add('standalone');
+    const setH = () => root.style.setProperty('--app-h',
+      Math.max(screen.height, window.innerHeight) + 'px');
+    setH();
+    window.addEventListener('resize', setH);
+  }
 
   // ── SERVICE WORKER ───────────────────────────────────
   if ('serviceWorker' in navigator) {
